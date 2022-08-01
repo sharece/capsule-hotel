@@ -50,6 +50,42 @@ const book = (evt) => {
     messages.innerHTML = bookingComplete;
   }
 };
+bookForm.addEventListener("submit", book);
+
+const checkout = (evt, checkoutInput) => {
+  evt.preventDefault();
+  const capNum = capInput.value;
+  const name = nameInput.value;
+  const checkoutNum = checkoutInput.value;
+  const guest = document.querySelector(`#guest${capNum}`);
+  const capsule = document.querySelector(`#capsuleLabel${capNum}`);
+  if (checkoutNum > CAPSULE_COUNT) {
+    let notACapMsg = "";
+    {
+      notACapMsg += `<div>
+    <span id ="msgLabel" class="alert alert-danger">That is not a valid capsule.</span></div>`;
+    }
+    messages.innerHTML = notACapMsg;
+  } else if (checkoutNum <= 100 && guest.innerHTML == "Unoccupied") {
+    let invalid = "";
+    {
+      invalid += `<div>
+    <span id ="msgLabel" class="alert-danger">That capsule is unoccupied.</span></div>`;
+    }
+    messages.innerHTML = invalid;
+  } else {
+    guest.innerText = "Unoccupied";
+    capsule.classList.remove("badge-danger");
+    capsule.classList.add("badge-success");
+    let html = "";
+    {
+      html += `<div>
+  <span id ="confMsg" class="alert alert-info">has checked out of capsule #${capNum}. </span></div>`;
+    }
+    messages.innerHTML = html;
+  }
+};
+checkoutForm.addEventListener("submit", checkout);
 
 function init() {
   const capsuleContainer = document.getElementById("capsules");
@@ -67,51 +103,3 @@ function init() {
   capsuleContainer.innerHTML = html;
 }
 init();
-
-const checkout = (evt, checkoutInput) => {
-  evt.preventDefault();
-  const capNum = capInput.value;
-  const name = nameInput.value;
-  const checkoutNum = checkoutInput.value;
-  const guest = document.querySelector(`#guest${capNum}`);
-  const capsule = document.querySelector(`#capsuleLabel${capNum}`);
-  if (checkoutNum >= 101) {
-    let notACapMsg = "";
-    {
-      notACapMsg += `<div>
-    <span id ="msgLabel" class="alert alert-danger">That is not a valid capsule.</span></div>`;
-    }
-    messages.innerHTML = notACapMsg;
-  } else if (checkoutNum <= 100 && guest.innerHTML == "Unoccupied") {
-    let invalid = "";
-    {
-      invalid += `<div>
-    <span id ="msgLabel" class="alert-danger">That capsule is unoccupied.</span></div>`;
-    }
-    messages.innerHTML = invalid;
-  } else if (checkoutNum === capNum || name) {
-    const guest = document.querySelector(`#guest${capNum}`);
-    guest.innerText = "Unoccupied";
-    capsule.classList.remove("badge-danger");
-    capsule.classList.add("badge-success");
-    let html = "";
-    {
-      html += `<div>
-  <span id ="confMsg" class="alert alert-info">Guest:&nbsp;
-  ${name} has checked out of capsule #${capNum}. </span></div>`;
-    }
-    messages.innerHTML = html;
-  } else {
-    let html = "";
-    {
-      html += `<div>
-<span id ="confMsg" class="alert alert-danger">Error</span></div>`;
-    }
-    messages.innerHTML = html;
-  }
-};
-checkoutForm.addEventListener("submit", checkout);
-
-bookForm.addEventListener("submit", book);
-//current questions
-//
