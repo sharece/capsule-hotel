@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Nosifer&display=swap");
+
+h1 {
+  padding-bottom: 1.1rem;
+  border-bottom: 2px solid #6d8db191;
+  font-family: "Nosifer", cursive;
+  color: maroon;
+}
+
+#capsules {
+  height: 75vh;
+  overflow-y: auto;
+}
+
+#messages {
+  min-height: 50px;
+}
