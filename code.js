@@ -5,7 +5,7 @@ const capInput = document.querySelector("#bookingCapsule");
 const checkoutInput = document.querySelector("#checkOutCapsule");
 const bookForm = document.querySelector("#bookForm");
 const msg = document.querySelector("#message");
-const checkoutForm = document.querySelector("#checkoutForm"); // check out room input
+const checkoutForm = document.querySelector("#checkoutForm");
 
 const book = (evt) => {
   evt.preventDefault();
@@ -52,37 +52,40 @@ const book = (evt) => {
 };
 bookForm.addEventListener("submit", book);
 
-const checkout = (evt, checkoutInput) => {
+const checkout = (evt) => {
   evt.preventDefault();
-  const capNum = capInput.value;
-  const name = nameInput.value;
   const checkoutNum = checkoutInput.value;
-  const guest = document.querySelector(`#guest${capNum}`);
-  const capsule = document.querySelector(`#capsuleLabel${capNum}`);
-  if (checkoutNum > CAPSULE_COUNT) {
-    let notACapMsg = "";
-    {
-      notACapMsg += `<div>
-    <span id ="msgLabel" class="alert alert-danger">That is not a valid capsule.</span></div>`;
-    }
-    messages.innerHTML = notACapMsg;
-  } else if (checkoutNum <= 100 && guest.innerHTML == "Unoccupied") {
-    let invalid = "";
-    {
-      invalid += `<div>
-    <span id ="msgLabel" class="alert-danger">That capsule is unoccupied.</span></div>`;
-    }
-    messages.innerHTML = invalid;
-  } else {
+  const guest = document.querySelector(`#guest${checkoutNum}`);
+  const capsule = document.querySelector(`#capsuleLabel${checkoutNum}`);
+
+  if (guest.innerHTML != "Unoccupied" && capsule.classList != "badge-danger") {
     guest.innerText = "Unoccupied";
     capsule.classList.remove("badge-danger");
     capsule.classList.add("badge-success");
     let html = "";
     {
       html += `<div>
-  <span id ="confMsg" class="alert alert-info">has checked out of capsule #${capNum}. </span></div>`;
+  <span id ="confMsg" class="alert alert-info">Success! Capsule #${checkoutNum} has checked out. </span></div>`;
     }
     messages.innerHTML = html;
+  } else if (checkoutNum > CAPSULE_COUNT) {
+    let notACapMsg = "";
+    {
+      notACapMsg += `<div>
+    <span id ="msgLabel" class="alert alert-danger">That is not a valid capsule.</span></div>`;
+    }
+    messages.innerHTML = notACapMsg;
+  } else if (capsule.classList != "badge-danger") {
+    let invalid = "";
+    {
+      invalid += `<div>
+    <span id ="msgLabel" class="alert-danger">That capsule is unoccupied.</span></div>`;
+    }
+    messages.innerHTML = invalid;
+  } else if ((checkoutNum = "")) {
+    messages.innerHTML = "Cannot sumbit empty form.";
+  } else {
+    messages.innerHTML = "Error";
   }
 };
 checkoutForm.addEventListener("submit", checkout);
