@@ -6,6 +6,7 @@ const checkoutInput = document.querySelector("#checkOutCapsule");
 const bookForm = document.querySelector("#bookForm");
 const msg = document.querySelector("#message");
 const checkoutForm = document.querySelector("#checkoutForm");
+let timeout;
 
 const book = (evt) => {
   evt.preventDefault();
@@ -17,14 +18,14 @@ const book = (evt) => {
     let emptyErrorText = "";
     {
       emptyErrorText += `<div>
-    <span id ="msgLabel" class="alert-danger">All fields must be filled out to book</span></div>`;
+    <span id ="error" class="alert-danger">All fields must be filled out to book</span></div>`;
     }
     messages.innerHTML = emptyErrorText;
   } else if (capInput.value > CAPSULE_COUNT) {
     let notACapMsg = "";
     {
       notACapMsg += `<div>
-    <span id ="msgLabel" class="alert-danger">That is not a valid capsule.</span></div>`;
+    <span id ="error" class="alert-danger">That is not a valid capsule.</span></div>`;
     }
     messages.innerHTML = notACapMsg;
   } else if (
@@ -34,7 +35,7 @@ const book = (evt) => {
     let overbookMsg = "";
     {
       overbookMsg += `<div>
-    <span id ="msgLabel" class="alert-danger">That capsule is occupied.</span></div>`;
+    <span id ="error" class="alert-danger">That capsule is occupied.</span></div>`;
     }
     messages.innerHTML = overbookMsg;
   } else {
@@ -45,10 +46,11 @@ const book = (evt) => {
     let bookingComplete = "";
     {
       bookingComplete += `<div>
-    <span id ="msgLabel" class="alert-info">Guest:&nbsp; ${name} booked in capsule ${capNum}. </span></div>`;
+    <span id ="green" class="alert-info">Guest:&nbsp; ${name} booked in capsule ${capNum}. </span></div>`;
     }
     messages.innerHTML = bookingComplete;
   }
+  evt.target.reset();
 };
 bookForm.addEventListener("submit", book);
 
@@ -58,37 +60,60 @@ const checkout = (evt) => {
   const guest = document.querySelector(`#guest${checkoutNum}`);
   const capsule = document.querySelector(`#capsuleLabel${checkoutNum}`);
 
-  if (guest.innerHTML != "Unoccupied" && capsule.classList != "badge-danger") {
+  if (!checkoutNum) {
+    let empty = "";
+    {
+      empty += `<div>
+      <span id ="error" class="alert alert-danger">To check out enter a capsule number.</span></div>`;
+    }
+    messages.innerHTML = empty;
+  } else if (
+    guest.innerHTML != "Unoccupied" &&
+    capsule.classList != "badge-danger"
+  ) {
     guest.innerText = "Unoccupied";
     capsule.classList.remove("badge-danger");
     capsule.classList.add("badge-success");
     let html = "";
     {
       html += `<div>
-  <span id ="confMsg" class="alert alert-info">Success! Capsule #${checkoutNum} has checked out. </span></div>`;
+  <span id ="green" class="alert alert-info">Thank you for your stay. Capsule #${checkoutNum} has checked out. </span></div>`;
     }
     messages.innerHTML = html;
-  } else if (checkoutNum > CAPSULE_COUNT) {
-    let notACapMsg = "";
-    {
-      notACapMsg += `<div>
-    <span id ="msgLabel" class="alert alert-danger">That is not a valid capsule.</span></div>`;
-    }
-    messages.innerHTML = notACapMsg;
   } else if (capsule.classList != "badge-danger") {
     let invalid = "";
     {
       invalid += `<div>
-    <span id ="msgLabel" class="alert-danger">That capsule is unoccupied.</span></div>`;
+    <span id ="error" class="alert-danger">That capsule is unoccupied.</span></div>`;
     }
     messages.innerHTML = invalid;
-  } else if ((checkoutNum = "")) {
-    messages.innerHTML = "Cannot sumbit empty form.";
+  } else if (checkoutInput.value > CAPSULE_COUNT) {
+    let notACapMsg = "";
+    {
+      notACapMsg += `<div>
+      <span id ="error" class="alert alert-danger">That is not a valid capsule.</span></div>`;
+    }
+    messages.innerHTML = notACapMsg;
   } else {
-    messages.innerHTML = "Error";
+    let idkerror = "";
+    {
+      idkerror += `<div><span id ="error" class="alert alert-danger">Error</div>`;
+    }
+    messages.innerHTML = idkerror;
   }
+  evt.target.reset();
 };
 checkoutForm.addEventListener("submit", checkout);
+
+const msgDisp = (msg, type) => {
+  if (timeout) clearTimeout(timeout);
+  messages.innerText = msg;
+  messages.className = `alert alert-${type}`;
+
+  setTimeout(() => {
+    msgDisp("", "info");
+  }, 7000);
+};
 
 function init() {
   const capsuleContainer = document.getElementById("capsules");
@@ -106,3 +131,4 @@ function init() {
   capsuleContainer.innerHTML = html;
 }
 init();
+//
